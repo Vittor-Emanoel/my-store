@@ -9,12 +9,14 @@ import {
   ShoppingCartIcon,
 } from "lucide-react";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "./avatar";
 import { Button } from "./button";
 import { Card } from "./card";
+import { Separator } from "./separator";
 import { Sheet, SheetContent, SheetHeader, SheetTrigger } from "./sheet";
 
 function Header() {
-  const { status } = useSession();
+  const { status, data } = useSession();
 
   async function handleLogin() {
     await signIn();
@@ -39,6 +41,23 @@ function Header() {
           </SheetHeader>
 
           <div className="mt-2 flex flex-col gap-3">
+            {status === "authenticated" && data?.user && (
+              <div className="my-3">
+                <div className="flex gap-3 items-center  py-3">
+                  <Avatar>
+                    {data.user.image && <AvatarImage src={data.user.image} />}
+                    <AvatarFallback>
+                      {data.user.name?.[0].toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  <p className="text-lg font-medium">{data.user.name}</p>
+                </div>
+
+                <Separator />
+              </div>
+            )}
+
             {status === "unauthenticated" && (
               <Button
                 variant="outline"
